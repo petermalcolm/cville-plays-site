@@ -25,6 +25,20 @@
 				The Charlottesville <br> Playwrights <br> Collective
 			</a>
 		</p>
+
+		<nav class="cpc-nav" aria-label="<?php esc_attr_e( 'Main', 'cville-playwrights' ); ?>">
+			<?php
+			wp_nav_menu(
+				array(
+					'theme_location' => 'primary',
+					'container'      => false,
+					'menu_class'     => 'cpc-nav__list',
+					'depth'          => 1,
+					'fallback_cb'    => 'cpc_nav_fallback',
+				)
+			);
+			?>
+		</nav>
 	</header>
 
 	<main class="cpc-main">
@@ -42,6 +56,14 @@
 		<?php endif; ?>
 	</main>
 </div>
+
+<footer class="cpc-footer">
+	<p>
+		&copy; <?php echo esc_html( wp_date( 'Y' ) ); ?> The Charlottesville Playwrights Collective
+		<span class="cpc-footer__sep" aria-hidden="true">&middot;</span>
+		<span class="cpc-footer__place">Charlottesville, VA</span>
+	</p>
+</footer>
 
 <?php wp_footer(); ?>
 </body>

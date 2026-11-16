@@ -42,7 +42,14 @@ Text Domain: cville-playwrights
      wide screens still have room for the content below it. 3.75rem = 60px. */
   --cpc-title-size: clamp(1.375rem, min(4.2vw, 7vh), 3.75rem);
   --cpc-logo-size: calc(3.45 * var(--cpc-title-size)); /* 3 title lines x 1.15 line height */
+  --cpc-logo-full: var(--cpc-logo-size); /* keeps the full size while the header is compact */
   --cpc-edge: 4%; /* space between the screen edges and the header / wide-screen content */
+  --cpc-header-pad: clamp(1rem, 3vw, 2.5rem); /* space above the header */
+
+  /* Compact header, after scrolling (desktop): title on one line, logo to match. */
+  --cpc-title-compact: min(1.375rem, 2.3vw, var(--cpc-title-size)); /* 22px, a little less on narrow desktops */
+  --cpc-logo-compact: calc(3.45 * var(--cpc-title-compact));
+  --cpc-compact-pad: 0.75rem;
 
   /* Page background: the navy as it looks under the hero overlay, so the two match. */
   --cpc-page: #080817;
@@ -112,13 +119,14 @@ body {
   z-index: 2;
 }
 
-/* Header: logo at the top left, title to its right, over the dark corner of the image.
-   The header's font size sets the size of both, so they always line up. */
+/* Header: logo at the top left, title to its right, menu at the top right,
+   over the dark corner of the image. The header's font size sets the size
+   of the logo and title, so they always line up. */
 .cpc-header {
   display: flex;
   align-items: center;
   gap: 0.5em;
-  padding: clamp(1rem, 3vw, 2.5rem) var(--cpc-edge) 0;
+  padding: var(--cpc-header-pad) var(--cpc-edge) 0;
   font-size: var(--cpc-title-size);
 }
 
@@ -156,10 +164,126 @@ body {
   text-decoration: none;
 }
 
-/* Phones: fixed spacing from the corner. */
+/* ---------- Top menu ---------- */
+/* Pushed to the right of the header, level with the top of the logo. */
+.cpc-nav {
+  align-self: flex-start;
+  margin-left: auto;
+  padding-left: 1.5rem; /* always some space between the title and the menu */
+}
+
+.cpc-nav__list {
+  display: flex;
+  gap: 1.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cpc-nav__list a {
+  color: var(--cpc-wheat);
+  font-family: var(--cpc-sans);
+  font-weight: 700;
+  font-size: 0.9375rem;
+  letter-spacing: 0.12em;
+  white-space: nowrap;
+  text-transform: uppercase; /* menu labels show in capitals however they're typed */
+  text-decoration: none;
+}
+
+.cpc-nav__list a:hover,
+.cpc-nav__list a:focus-visible {
+  text-decoration: underline;
+  text-underline-offset: 0.3em;
+}
+
+/* Narrower screens: the title needs the full width, so the menu
+   moves onto its own line above the logo, still on the right. */
+@media (max-width: 760px) {
+  .cpc-header {
+    flex-wrap: wrap;
+    padding-top: 0.75rem;
+  }
+
+  .cpc-nav {
+    order: -1;
+    flex-basis: 100%;
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 0.4em;
+  }
+
+  .cpc-nav__list a {
+    font-size: 0.8125rem;
+  }
+}
+
+/* Phones: fixed spacing from the screen edges. */
 @media (max-width: 640px) {
   .cpc-header {
-    padding: 1rem 1rem 0;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+}
+
+/* ---------- Sticky, shrinking header (desktop) ---------- */
+/* The header stays at the top of the screen. Once the page is scrolled
+   (header.js adds .is-compact), the title drops to one line and the logo
+   shrinks to match. */
+@media (min-width: 900px) {
+  .cpc-header {
+    position: sticky;
+    top: var(--wp-admin--admin-bar--height, 0px); /* below the admin bar when logged in */
+    transition:
+      font-size 0.25s ease,
+      padding 0.25s ease,
+      margin 0.25s ease,
+      background-color 0.25s ease,
+      box-shadow 0.25s ease;
+  }
+
+  .cpc-logo {
+    transition: width 0.25s ease, height 0.25s ease, box-shadow 0.25s ease;
+  }
+
+  .cpc-header.is-compact {
+    --cpc-title-size: var(--cpc-title-compact);
+    --cpc-logo-size: var(--cpc-logo-compact);
+    padding-top: var(--cpc-compact-pad);
+    padding-bottom: var(--cpc-compact-pad);
+    /* Makes up the height the header loses, so the page below doesn't jump. */
+    margin-bottom: calc(
+      var(--cpc-header-pad) + var(--cpc-logo-full) - 2 * var(--cpc-compact-pad) - var(--cpc-logo-compact)
+    );
+    background-color: rgba(8, 8, 23, 0.92);
+    background-color: color-mix(in srgb, var(--cpc-page) 92%, transparent);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+  }
+
+  .cpc-header.is-compact .cpc-logo {
+    box-shadow: none;
+  }
+
+  .cpc-header.is-compact .cpc-site-title {
+    white-space: nowrap;
+    /* While the text is still shrinking, clip it rather than let it run under the menu. */
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  .cpc-header.is-compact .cpc-site-title br {
+    display: none;
+  }
+
+  .cpc-header.is-compact .cpc-nav {
+    align-self: center;
+  }
+}
+
+@media (min-width: 900px) and (prefers-reduced-motion: reduce) {
+  .cpc-header,
+  .cpc-logo {
+    transition: none;
   }
 }
 
@@ -247,4 +371,33 @@ body {
 .wp-block-button .wp-block-button__link:focus-visible {
   outline: 3px solid var(--cpc-navy);
   outline-offset: 3px;
+}
+
+/* ---------- Footer ---------- */
+.cpc-footer {
+  padding: 2rem 1rem;
+  color: var(--cpc-wheat);
+  font-family: var(--cpc-sans);
+  font-size: 0.875rem;
+  text-align: center;
+}
+
+.cpc-footer p {
+  margin: 0;
+}
+
+.cpc-footer__sep {
+  margin: 0 0.5em;
+}
+
+/* Phones: the location goes on its own line instead of after a separator. */
+@media (max-width: 640px) {
+  .cpc-footer__sep {
+    display: none;
+  }
+
+  .cpc-footer__place {
+    display: block;
+    margin-top: 0.25rem;
+  }
 }
