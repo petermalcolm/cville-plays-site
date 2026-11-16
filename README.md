@@ -2,5 +2,5 @@
 
 WordPress theme and assets for the Charlottesville Playwrights Collective:
 
-See cvilleplays.org
+See [cvilleplays.org](cvilleplays.org){:target="_blank"}
 
