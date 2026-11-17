@@ -340,9 +340,11 @@ body {
 }
 
 /* ---------- Call-to-action button ---------- */
-/* Every Button block in the editor gets this look automatically, whichever
-   style is picked. .cpc-button gives a plain link the same look. */
+/* Every Button block gets this look automatically, whichever style is picked,
+   as does a button link pasted as HTML (class "wp-block-button__link") inside
+   the content. .cpc-button gives any other link the same look. */
 .cpc-button,
+.cpc-panel .wp-block-button__link,
 .wp-block-button .wp-block-button__link {
   display: inline-block;
   padding: 1em 2.25em;
@@ -362,12 +364,14 @@ body {
 }
 
 .cpc-button:hover,
+.cpc-panel .wp-block-button__link:hover,
 .wp-block-button .wp-block-button__link:hover {
   background-color: var(--cpc-navy-hover);
   color: var(--cpc-wheat);
 }
 
 .cpc-button:focus-visible,
+.cpc-panel .wp-block-button__link:focus-visible,
 .wp-block-button .wp-block-button__link:focus-visible {
   outline: 3px solid var(--cpc-navy);
   outline-offset: 3px;
